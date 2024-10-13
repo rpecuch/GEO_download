@@ -149,7 +149,7 @@ PlateAnnotInfo$GPLID <- "GPL80"
 TODO: remove execution of this in report
 Code to download data and save to working directory:
 
-```{r}
+```{r download}
 library(DESeq2)
 library(limma)
 library(data.table)
@@ -260,6 +260,15 @@ path_to_write <- paste0(getwd(), "/ArrayData.txt")
 write.table(as.data.frame(ArrayData[["Data"]]), file=path_to_write, sep="\t")
 ```
 
+TODO: remove execution of this part
+Code to reload data file and perform manipulations/calculations:
+
+```{r manipulate}
+# Read data
+array_data <- read.table(path_to_write, sep="\t")
+# Get preview of data
+head(as.data.frame(array_data),10)
+```
 
 ## Including Plots
 
