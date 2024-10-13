@@ -289,7 +289,7 @@ for(col in sample_cols){
 names(avgs) <- sample_cols
 
 # TODO: see if these charts need to have control and treatment groups split
-# Plot histogram
+# Plots
 hist(avgs)
 boxplot(avgs)
 stripchart(avgs, method="stack")
@@ -301,8 +301,20 @@ dotchart(sort(avgs))
 Code to create avg. gene expression per gene charts:
 
 ```{r plot gene}
+# Get avg. for each gene
+array_data$AVG_EXPRESSION <- rowMeans(array_data[, 8:length(array_data)], na.rm=T)
+
+# TODO: see if these charts need gene names
+# Plots
+hist(array_data$AVG_EXPRESSION)
+boxplot(array_data$AVG_EXPRESSION)
+dotchart(sort(array_data$AVG_EXPRESSION))
 
 ```
+
+Code to find genes with the highest and the lowest expression levels across all samples – capture their names and characteristic expression levels.
+
+
 
 ## Including Plots
 
