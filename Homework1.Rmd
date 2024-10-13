@@ -270,6 +270,40 @@ array_data <- read.table(path_to_write, sep="\t")
 head(as.data.frame(array_data),10)
 ```
 
+TODO: make sure to go back and do part c
+
+Code to create avg. sample gene expression charts:
+
+```{r plot}
+# control samples: GSM11625, GSM11757, GSM11758, GSM11759
+# treatment samples: GSM11760, GSM11768, GSM11769, GSM11770, GSM11771, GSM11772, GSM11773, GSM11774, GSM11775
+library(stringr)
+# Get all sample names
+sample_cols <- names(array_data)[grep("^GSM", names(array_data))]
+# Get avg for each sample
+avgs <- c()
+for(col in sample_cols){
+  avg <- mean(array_data[[col]], na.rm=T)
+  avgs <- c(avgs, avg)
+}
+names(avgs) <- sample_cols
+
+# TODO: see if these charts need to have control and treatment groups split
+# Plot histogram
+hist(avgs)
+boxplot(avgs)
+stripchart(avgs, method="stack")
+dotchart(avgs)
+dotchart(sort(avgs))
+
+```
+
+Code to create avg. gene expression per gene charts:
+
+```{r plot gene}
+
+```
+
 ## Including Plots
 
 You can also embed plots, for example:
