@@ -1,0 +1,68 @@
+---
+title: "RBIF111 Homework 1"
+author: "Rita Pecuch"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+Objective: Create a function that calculates the mean of a numeric vector starting from the first element to the last. Then compare this to the results of the mean() R function.
+
+Function definition:
+
+```{r mean function}
+calculate_mean <- function(vector, na.rm=F){
+  # Remove NA values if needed
+  if (na.rm){
+    vector <- vector[!is.na(vector)]
+  }
+  # Calculate sum of all observations
+  total <- 0
+  for(x in vector){
+      total <- total + x
+  }
+  
+  # Divide total by number of observations
+  mean <- total / length(vector)
+  return(mean)
+}
+```
+
+Comparing function results with mean() R function:
+
+```{r comparing mean functions}
+test_vector <- c(1,2,3,4,5,6,7,11,100)
+# R function
+mean(test_vector)
+# Custom function
+calculate_mean(test_vector)
+
+# Add NA value
+test_vector_na <- c(test_vector, NA)
+mean(test_vector_na)
+calculate_mean(test_vector_na)
+
+# Add NA value and use na.rm=T
+mean(test_vector_na, na.rm=T)
+calculate_mean(test_vector_na, na.rm=T)
+```
+
+## Question 2
+
+Objective A: Execute and explain the results of the following piece of R code:
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
