@@ -92,7 +92,7 @@ This line of code uses the matrix() function to generate a matrix with the follo
 ```{r}
 numbers <- NULL
 ```
-This line of code assigns the value NULL to the variable called numbers. Nothing is printed because the value is being stored in a variable. When used with the below chunk of code, this line of code serves the purpose of initializing the numbers variable with an empty value.
+This line of code assigns the value NULL to the variable called numbers. Nothing is printed because the value is being stored in a variable. When used with the below chunk of code, this line of code serves the purpose of initializing the numbers variable with an empty value. The variable is now available to have its value changed in the for loop.
 
 ```
 for(i in 1:4){
@@ -102,7 +102,7 @@ for(i in 1:4){
 ```
 This block of code attempts to loop through the numbers in the range 1-4 and apply the following logic at each iteration:
 - Subset a single row from matrix m with the row number matching the current iteration of the loop
-- Add all of the values in the subsetted matrix (a vector) to the current values of the numbers variable.
+- Add all of the values in the subsetted matrix to the current values of the numbers variable
 However, an error message is printed on the final iteration of the loop because matrix m is a 3 x 3 matrix and does not have a row 4. Because the loop was able to successfully complete iterations 1-3, the current value of the numbers variable is c(1, 2, 3, 4, 5, NA, 7, 7, NA).
 
 ## Question 3
@@ -121,28 +121,38 @@ Control group: myomtrium samples
 
 Treatment group: uterine leiomyosarcoma samples
 
-TODO: remove execution of this in report
 Code to get plate annotation info:
 
-```{r get PlatAnnotInfo}
+```
 library(GEOquery)
 library(data.table)
 library(org.Hs.eg.db)
-z <- getGEO("GPL80")
+
+# Get probe ID info and corresponding genes
+gpl <- "GPL80"
+z <- getGEO(gpl)
 PlateAnnotInfo <- as.data.table(z@dataTable@table)
+# Select only needed columns
 PlateAnnotInfo <- PlateAnnotInfo[,c("ID", "Gene Symbol", "ENTREZ_GENE_ID"), with = FALSE]
+# Remove slashes from gene id and symbol as needed
 PlateAnnotInfo$`Gene Symbol` <- gsub(" ///.+", "", PlateAnnotInfo$`Gene Symbol`)
 PlateAnnotInfo$ENTREZ_GENE_ID <- gsub(" ///.+", "", PlateAnnotInfo$ENTREZ_GENE_ID)
+# Filter out blank results for gene symbol
 PlateAnnotInfo <- PlateAnnotInfo[!PlateAnnotInfo$`Gene Symbol` == "",]
+# Rename columns
 setnames(PlateAnnotInfo, c("Gene Symbol", "ENTREZ_GENE_ID"), c("SYMBOL", "ENTREZID"))
+# Filter out blank results for gene id
 PlateAnnotInfo <- PlateAnnotInfo[!is.na(ENTREZID),]
 PlateAnnotInfo <- PlateAnnotInfo[!ENTREZID == "",]
+# Convert to character type
 PlateAnnotInfo$ENTREZID <- as.character(PlateAnnotInfo$ENTREZID)
+# Get mappings between gene ids and names
 mappings <- AnnotationDbi::select(org.Hs.eg.db, keys=PlateAnnotInfo$ENTREZID, columns=c("GENENAME"),keytype="ENTREZID")
+# Merge gene name information
 PlateAnnotInfo <- unique(merge(PlateAnnotInfo, mappings, by = "ENTREZID", allow.cartesian = TRUE))
 PlateAnnotInfo <- PlateAnnotInfo[,c("ID", "ENTREZID", "SYMBOL", "GENENAME")]
-PlateAnnotInfo$GPLID <- "GPL80"
-# datatable(head(as.data.frame(PlateAnnotInfo),10), filter = 'top', options = list(pageLength = 10, scrollX = TRUE, scrollY = "400px", autoWidth = TRUE))
+# Add column with gplXXXX number
+PlateAnnotInfo$GPLID <- gpl
 ```
 
 TODO: remove execution of this in report
