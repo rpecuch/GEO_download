@@ -117,13 +117,13 @@ GSEXXX number: GSE764
 
 gplXXX number: GPL80
 
-Control group: myomtrium samples
+Control group: myometrium samples
 
 Treatment group: uterine leiomyosarcoma samples
 
 Code to get plate annotation info:
 
-``` 
+``` {r annot}
 library(GEOquery)
 library(data.table)
 library(org.Hs.eg.db)
@@ -154,9 +154,10 @@ PlateAnnotInfo <- PlateAnnotInfo[,c("ID", "ENTREZID", "SYMBOL", "GENENAME")]
 # Add column with gplXXXX number
 PlateAnnotInfo$GPLID <- gpl
 ```
+
 Code to download data and save to working directory:
 
-```
+```{r download}
 library(DESeq2)
 library(limma)
 
@@ -286,14 +287,15 @@ path_to_write <- paste0(getwd(), "/ArrayData.txt")
 write.table(as.data.frame(ArrayData[["Data"]]), file=path_to_write, sep="\t")
 ```
 
-TODO: remove execution of this part
-Code to reload data file and perform manipulations/calculations:
+Code to reload data file and add annotation:
 
 ```{r manipulate}
 # Read data
 array_data <- read.table(path_to_write, sep="\t")
 # Get preview of data
 head(as.data.frame(array_data),10)
+# Add annotation
+array_data$Subset_Comparison <- "Leiomysarcoma-Myometrium"
 ```
 
 TODO: make sure to go back and do part c
