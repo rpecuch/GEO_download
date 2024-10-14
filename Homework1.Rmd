@@ -123,7 +123,7 @@ Treatment group: uterine leiomyosarcoma samples
 
 Code to get plate annotation info:
 
-```
+``` 
 library(GEOquery)
 library(data.table)
 library(org.Hs.eg.db)
@@ -154,17 +154,16 @@ PlateAnnotInfo <- PlateAnnotInfo[,c("ID", "ENTREZID", "SYMBOL", "GENENAME")]
 # Add column with gplXXXX number
 PlateAnnotInfo$GPLID <- gpl
 ```
-
-TODO: remove execution of this in report
 Code to download data and save to working directory:
 
-```{r download}
+```
 library(DESeq2)
 library(limma)
-library(data.table)
 
 # Define download function
 GEODataDownload <- function(DS, gpl, gsm, PlateAnnotInfo, GenerateMetaData, Technology){
+  library(DESeq2)
+  library(limma)
   if(Technology == "Array"){
     # Load series and platform data from GEO
     gset <- getGEO(DS)
@@ -184,31 +183,36 @@ GEODataDownload <- function(DS, gpl, gsm, PlateAnnotInfo, GenerateMetaData, Tech
     sml <- sml[sel]
     gset <- gset[ ,sel]
     
-    # TODO: maybe remove this part
-    #### Set up raw names ####
-    # sml <- c()
-    # for(i in 1:nchar(gsms)){ sml[i] <- substr(gsms,i,i)}
-    
+    # log2 transformation
     ex <- exprs(gset)
     qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
     LogC <- (qx[5] > 100) ||
       (qx[6]-qx[1] > 50 && qx[2] > 0) ||
       (qx[2] > 0 && qx[2] < 1 && qx[4] < 2)
     if(LogC){ ex[which(ex <= 0)] <- NaN
-    exprs(gset) <- log2(ex) }
+      exprs(gset) <- log2(ex) }
+    
     sml <- paste("G", sml, sep="")
     f1 <- as.factor(sml)
     gset$description2 <- f1
     design <- model.matrix(~description2 + 0, gset)
     colnames(design) <- levels(f1)
+    
+    # Fit linear model
     fit <- lmFit(gset, design)
+    
+    # Set up contrasts of interest and recalculate model coefficients
     cont.matrix <- makeContrasts(G1-G0, levels = design)
     fit2 <- contrasts.fit(fit, cont.matrix)
+    
+    # Compute statistics and table of top significant genes
     fit2 <- eBayes(fit2, 0.01)
     tT <- topTable(fit2, adjust="fdr", sort.by = "B", number = 25000000000)
+    
     #### subset ####
     ex2 <- data.table(subset(tT, select=c("ID", "logFC", "P.Value", "adj.P.Val")))
     ex2$ID <- as.character(ex2$ID)
+    
     #### annotate with gene names ####
     plat <- PlateAnnotInfo[GPLID == gpl,][,!"GPLID", with = FALSE]
     if(nrow(plat) == 0){ print(paste("There is no annotation information available for", gpl)) }
