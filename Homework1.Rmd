@@ -314,7 +314,44 @@ dotchart(sort(array_data$AVG_EXPRESSION))
 
 Code to find genes with the highest and the lowest expression levels across all samples – capture their names and characteristic expression levels.
 
+TODO: the rest of question 3
 
+## Question 4
+
+Objective: For all of the columns in the UCI machine learning data set, calculate the number of missing values, the mean, median, standard deviation. For categorical variables, calculate the counts for each feature. Visualize these results as boxplots. Describe any findings and why the calculated values may be different between each column.
+
+Dataset: Heart Disease, Cleveland database
+
+Code to read dataset into R:
+
+```{r ml data read}
+setwd("/Users/ritapecuch/Downloads/heart+disease")
+# Read dataset
+ml_data_path <- paste0(getwd(), "/processed.cleveland.data")
+ml_col_names <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num")
+ml_data <- read.table(ml_data_path, sep=",", col.names = ml_col_names)
+```
+
+Calculations and plots:
+
+```{r ml data}
+na_counts <-  colSums(is.na(ml_data))
+categorical_vars <- c("sex", "cp", "fbs", "restecg", "exang", "slope", "thal")
+
+# Get stats for each column
+for (col in names(ml_data)){
+  print(col)
+  num_missing <- na_counts[[col]]
+  mean <- mean(ml_data[[col]], na.rm=T)
+  median <- median(ml_data[[col]], na.rm=T)
+  sd <- sd(ml_data[[col]], na.rm=T)
+  
+  if (col %in% categorical_vars){
+    category_counts <- table(ml_data[[col]])
+    print(category_counts)
+  }
+}
+```
 
 ## Including Plots
 
