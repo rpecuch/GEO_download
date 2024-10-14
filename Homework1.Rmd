@@ -59,18 +59,17 @@ Objective A: Execute and explain the results of the following block of R code:
 ```{r}
 mat <- matrix(1:9, nrow = 3, ncol = 3)
 ```
-This line of code uses the matrix() function to generate a matrix with numerical data values 1-9. The matrix has 3 rows and 3 columns, and the data values fill in the first column, then the second, then the third. There is no need for recycling because the number of data values equals the dimensions of the matrix. Because the result of the matrix() function is being stored in a variable, no nothing is printed.
+This line of code uses the matrix() function to generate a matrix with numerical data values 1-9. The matrix has 3 rows and 3 columns, and the data values fill in the first column, then the second, then the third. There is no need for recycling because the number of data values equals the dimensions of the matrix. Because the result of the matrix() function is being stored in a variable, nothing is printed.
 
 ```{r}
 which.max(mat)
 ```
-This line of code uses the which.max() function to determine the location of the maximum of the matrix, which is position 9. The result is not being stored in a variable and thus is printed.
+This line of code uses the which.max() function to determine the index of the first instance of the maximum of the matrix, which is index 9. The index is determined by column, meaning looking through all the values in column 1 top to bottom, then column 2, then column 3. The result is not being stored in a variable and thus is printed.
 
 ```
 which.max(as.data.frame(mat))
 ```
-TODO: come back to this
-This line of code attempts to use the which.max() function on the matrix that has been coerced to a dataframe. An error message is printed because
+This line of code attempts to use the which.max() function on the matrix that has been coerced to a data frame. An error message is printed because the which.max() function takes a single vector as an input. In R, a matrix is stored internally as single vector, but a data frame is stored in a way that rather each column is a vector.
 
 ```
 mat[1:9,]
