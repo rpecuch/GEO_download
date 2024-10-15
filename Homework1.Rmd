@@ -395,7 +395,10 @@ TODO: go back and add descriptions to all manipulations and plots
 
 ## Question 4
 
-Objective: For all of the columns in the UCI machine learning data set, calculate the number of missing values, the mean, median, standard deviation. For categorical variables, calculate the counts for each feature. Visualize these results as boxplots. Describe any findings and why the calculated values may be different between each column.
+Objective: For all of the columns in the UCI machine learning data set, calculate the number of missing values, the mean, median, standard deviation. For categorical variables, calculate the counts for each feature. 
+
+QUESTION:
+Visualize these results as boxplots (what results? All or just the categorical?). Describe any findings and why the calculated values may be different between each column. (Am I overthinking this? Each column is a different variable, so obviously the calculated variables are different between each column)
 
 Dataset: Heart Disease, Cleveland database
 
@@ -417,25 +420,24 @@ categorical_vars <- c("sex", "cp", "fbs", "restecg", "exang", "slope", "thal")
 
 # Get stats for each column
 for (col in names(ml_data)){
-  print(col)
+  print(paste0("Statistical summary for column ", col, " :"))
+  # Handle ? values in ca column
+  ml_data[[col]] <- as.numeric(ml_data[[col]])
+
+  # Calculate stats
   num_missing <- na_counts[[col]]
+  print(paste0("Number of missing values: ", num_missing))
   mean <- mean(ml_data[[col]], na.rm=T)
+  print(paste0("Mean: ", mean))
   median <- median(ml_data[[col]], na.rm=T)
+  print(paste0("Median: ", median))
   sd <- sd(ml_data[[col]], na.rm=T)
-  
+  print(paste0("Standard deviation: ", sd))
+
   if (col %in% categorical_vars){
     category_counts <- table(ml_data[[col]])
+    print("Category counts: ")
     print(category_counts)
   }
 }
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
