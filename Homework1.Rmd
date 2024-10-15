@@ -324,31 +324,31 @@ names(avgs) <- sample_cols
 names(groups) <- sample_cols
 ```
 
-Histogram:
+The below plot is a histogram of the average gene expression by sample. Due to the visualized peak, the plot shows that the most common average gene expression in a sample is 480-500. As average gene expression increases or decreases from this range, the number of samples decreases.
 
 ```{r histogram by sample, warning = FALSE}
 hist(avgs, main="Average Gene Expression by Sample", xlab="Average Gene Expression Level", ylab="# of Samples")
 ```
 
-Boxplot:
+The below plot is a boxplot of the average gene expression by sample stratified by treatment group. In this case, the control group contains myometrium samples, and the treatment group contains uterine leiomyosarcoma samples. The plot visualizes a slightly higher average gene expression level in leiomyosarcoma samples, as well as a wider range of gene expression levels.
 
 ```{r boxplot by sample, warning = FALSE}
 boxplot(avgs~groups, ylab="Average Gene Expression Level", xlab="Groups")
 ```
 
-Stripchart:
+The below plot is a stripchart of the average gene expression level by sample. Based on the placement of the markers, the plot visualizes that the average gene expression ranged from about 450-530, and the greatest quantity of samples fell in the 480-500 range.
 
 ```{r stripchart by sample, warning = FALSE}
 stripchart(avgs, method="jitter", xlab="Average Gene Expression Level")
 ```
 
-Dotchart:
+The below plot is a dotchart of the average gene expression level by sample. The samples are on the y-axis, and the average gene expression level is on the x-axis. Based on the horizontal placement of the dots, the plot visualizes that the average gene expression ranged from about 450-530, and the greatest quantity of samples fell in the 480-500 range.
 
 ```{r dotchart by sample, warning = FALSE}
 dotchart(avgs, main="Average Gene Expression by Sample")
 ```
 
-Dotchart sorted in ascending order:
+The below plot is a dotchart of the average gene expression level by sample, with the data first sorted in ascending order by average gene expression level. Based on the steep slope seen between about 480-500, the plot visualizes that the greatest quantity of samples fell in the 480-500 range.
 
 ```{r dotchart by sample ascending, warning = FALSE}
 dotchart(sort(avgs), main="Average Gene Expression by Sample")
@@ -360,6 +360,7 @@ Code to create charts that visualize average expression level for each gene:
 # Get avg. for each gene
 array_data$AVG_EXPRESSION <- rowMeans(array_data[c(sample_cols)], na.rm=T)
 
+# TODO: remove this code if unused
 # Split into control and treatment groups, and re-calculate avgs.
 # treatment_samples <- setdiff(sample_cols, control_samples)
 # ref_cols <- setdiff(names(array_data), sample_cols)
@@ -370,17 +371,19 @@ array_data$AVG_EXPRESSION <- rowMeans(array_data[c(sample_cols)], na.rm=T)
 # trt_data$AVG_EXPRESSION <- rowMeans(trt_data[c(treatment_samples)], na.rm=T)
 ```
 
-Histogram:
+The below plot is a histogram of the average gene expression by gene. The plot visualizes that depending on the gene, the average expression level in a sample can reach nearly 30000. Due to the visualized peak, the plot shows that the most common average gene expression in a sample is well below 5000, but this chart would need to be displayed on a larger screen and with more frequent x-labels to gauge more specific numbers.
 
 ```{r hist by gene, warning = FALSE}
-hist(array_data$AVG_EXPRESSION, main="Average Expression by Gene", xlab="Average Gene Expression Level", ylab="# of Genes")
+hist(array_data$AVG_EXPRESSION, main="Average Expression by Gene", xlab="Average Gene Expression Level", ylab="# of Genes", breaks=200)
 ```
 
-Boxplot:
+The below plot is a boxplot of the average gene expression by gene. The plot visualizes that while the most common average expression level for a gene is far below 5000, average expression level can reach up to nearly 30000.
 
 ```{r boxplot by gene, warning = FALSE}
 boxplot(array_data$AVG_EXPRESSION, main="Average Expression Level by Gene")
 ```
+
+The below plot is a dotchart of the average gene expression level by gene, with the data first sorted in ascending order by average expression level. Based on the steep slope seen well under 5000, the plot visualizes that the greatest quantity of genes have an average expression level of well under 5000. However, some genes are still visualized as having a much higher average expression level up to nearly 30000.
 
 ```{r dotchart by gene ascending, warning = FALSE}
 dotchart(sort(array_data$AVG_EXPRESSION), main="Average Expression by Gene")
@@ -398,6 +401,7 @@ TODO: go back and add descriptions to all manipulations and plots
 Objective: For all of the columns in the UCI machine learning data set, calculate the number of missing values, the mean, median, standard deviation. For categorical variables, calculate the counts for each feature. 
 
 QUESTION:
+Boxplot for each column, or really any plot
 Visualize these results as boxplots (what results? All or just the categorical?). Describe any findings and why the calculated values may be different between each column. (Am I overthinking this? Each column is a different variable, so obviously the calculated variables are different between each column)
 
 Dataset: Heart Disease, Cleveland database
