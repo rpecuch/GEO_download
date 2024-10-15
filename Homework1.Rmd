@@ -424,24 +424,24 @@ categorical_vars <- c("sex", "cp", "fbs", "restecg", "exang", "slope", "thal")
 
 # Get stats for each column
 for (col in names(ml_data)){
-  print(paste0("Statistical summary for column ", col, " :"))
   # Handle ? values in ca column
   ml_data[[col]] <- as.numeric(ml_data[[col]])
 
   # Calculate stats
   num_missing <- na_counts[[col]]
-  print(paste0("Number of missing values: ", num_missing))
   mean <- mean(ml_data[[col]], na.rm=T)
-  print(paste0("Mean: ", mean))
   median <- median(ml_data[[col]], na.rm=T)
-  print(paste0("Median: ", median))
   sd <- sd(ml_data[[col]], na.rm=T)
-  print(paste0("Standard deviation: ", sd))
+  
+  stats_df <- data.frame(c(num_missing, mean, median, sd), row.names = c("Missing Values", "Mean", "Median", "Standard Deviation"))
+  names(stats_df) <- c(paste0("Result for Column ", col))
+  print(stats_df)
 
   if (col %in% categorical_vars){
     category_counts <- table(ml_data[[col]])
-    print("Category counts: ")
-    print(category_counts)
+    cat_count_df <- data.frame(category_counts)
+    names(cat_count_df) <- c(paste0(col, " Category"), "Frequency")
+    print(cat_count_df)
   }
 }
 ```
