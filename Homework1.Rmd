@@ -398,11 +398,7 @@ TODO: go back and add descriptions to all manipulations and plots
 
 ## Question 4
 
-Objective: For all of the columns in the UCI machine learning data set, calculate the number of missing values, the mean, median, standard deviation. For categorical variables, calculate the counts for each feature. 
-
-QUESTION:
-Boxplot for each column, or really any plot
-Visualize these results as boxplots (what results? All or just the categorical?). Describe any findings and why the calculated values may be different between each column. (Am I overthinking this? Each column is a different variable, so obviously the calculated variables are different between each column)
+Objective: For all of the columns in the UCI machine learning data set, calculate the number of missing values, the mean, median, standard deviation. For categorical variables, calculate the counts for each feature. Visualize these results as boxplots. Describe any findings and why the calculated values may be different between each column.
 
 Dataset: Heart Disease, Cleveland database
 
@@ -416,10 +412,11 @@ ml_col_names <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "tha
 ml_data <- read.table(ml_data_path, sep=",", col.names = ml_col_names)
 ```
 
-Calculations and plots:
+The tables and figures that are presented below have been created from the Heart Disease dataset from the Cleveland database. The boxplot of the age variable shows that age group that makes up the biggest proportion of representation in the data is about 47-60, but with a wide spread between about 30-80. The histogram of the sex variable shows that the sex corresponding to the "1" category was twice as prevelant in the dataset than the sex corresponding to the "0" category. The histogram of the cp variable shows an increasing trend in frequency as the category (1-4) increases. The boxplot of the trestbps variable shows that 50% of the observations were about 120-140 and several outliers were observed above about 170. The boxplot of the chol variable shows that 50% ot the observations were between 200-300 and a few outliers were observed in approximately the 400-500 range. The histogram of the fbs variable shows a significantly higher frequency of the "0" category than the "1" category. The histogram of the restecg variable shows about equal frequencies of the "0" and "2" categories, and a significantly lower frequency of the "1" category. The boxplot of the thalach variable shows that 50% of the observations were in the range of about 130-160, and only a single outlier was observed of about 70. The histogram of the exang variable shows a signficantly higher frequency of the "0" category than the "1" category. The boxplot of the oldpeak variable shows that a little over 75% of the observations were less than 2, with outliers reaching up to 6-7. The histogram of the slope variable shows about equal frequencies of the "1" and "2" categories, and a significantly lower frequency of the "3" category. The boxplot of the ca variable shows that 75% of the observations were 1 and below, and only a single outlier was observed at about 3. The histogram of the thal variable shows significant differences between the frequencies of all 3 categories. The boxplot of the num variable shows that 75% of the observations were 0-2, and the remaining 25% were 2-4 with no outliers.
 
-```{r ml data, warning = FALSE}
-na_counts <-  colSums(is.na(ml_data))
+Code for generating the above-described calculations and plots of the Heart Disease data set:
+
+```{r ml data analyze, warning = FALSE}
 categorical_vars <- c("sex", "cp", "fbs", "restecg", "exang", "slope", "thal")
 
 # Get stats for each column
@@ -428,7 +425,7 @@ for (col in names(ml_data)){
   ml_data[[col]] <- as.numeric(ml_data[[col]])
 
   # Calculate stats
-  num_missing <- na_counts[[col]]
+  num_missing <- sum(is.na(ml_data[[col]]))
   mean <- mean(ml_data[[col]], na.rm=T)
   median <- median(ml_data[[col]], na.rm=T)
   sd <- sd(ml_data[[col]], na.rm=T)
@@ -437,11 +434,17 @@ for (col in names(ml_data)){
   names(stats_df) <- c(paste0("Result for Column ", col))
   print(stats_df)
 
+  # Category counts and histogram if applicable, otherwise use boxplot
   if (col %in% categorical_vars){
     category_counts <- table(ml_data[[col]])
     cat_count_df <- data.frame(category_counts)
     names(cat_count_df) <- c(paste0(col, " Category"), "Frequency")
     print(cat_count_df)
+    # Generate bar chart
+    hist(ml_data[[col]], main=paste0("Counts of Values for ", col))
+  } else{
+    # Generate box plot
+    boxplot(ml_data[[col]], main=paste0("Spread of Values for ", col))
   }
 }
 ```
