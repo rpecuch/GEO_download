@@ -389,12 +389,64 @@ The below plot is a dotchart of the average gene expression level by gene, with 
 dotchart(sort(array_data$AVG_EXPRESSION), main="Average Expression by Gene")
 ```
 
-Code to find genes with the highest and the lowest expression levels across all samples – capture their names and characteristic expression levels.
+Calculations to find genes with the highest and the lowest and highest expression levels across all samples:
+
+```{r high and low}
+# Gene with highest expression level across all samples - 1
+max_expression <- max(array_data$AVG_EXPRESSION, na.rm=T)
+array_data_high <- array_data[!is.na(array_data$AVG_EXPRESSION) ,]
+array_data_high <- array_data_high[array_data_high$AVG_EXPRESSION == max_expression ,]
+max_exp_levels <- as.vector(as.numeric(array_data_high[sample_cols]))
+
+# Genes with lowest expression level across all samples - multiple, will choose first result for this example
+min_expression <- min(array_data$AVG_EXPRESSION, na.rm=T)
+array_data_low <- array_data[!is.na(array_data$AVG_EXPRESSION) ,]
+array_data_low <- array_data_low[array_data_low$AVG_EXPRESSION == min_expression,]
+array_data_low <- array_data_low[1,]
+min_exp_levels <- as.vector(as.numeric(array_data_low[sample_cols]))
+```
+
+The following plots show the distribution across samples of the gene expression level of the ribosomal protein L37a gene.
+TODO: add comments
+
+```{r max expression}
+title <- "Expression of ribosomal protein L37a gene"
+
+hist(max_exp_levels, main=title, xlab="Gene Expression Level", ylab="# of Samples")
+
+boxplot(max_exp_levels, main=title)
+
+stripchart(max_exp_levels, method="jitter", xlab="Gene Expression Level", main=title)
+
+dotchart(max_exp_levels, main=title)
+
+dotchart(sort(max_exp_levels), main=title)
+```
+
+The following plots show the distribution across samples of the gene expression level of the 8-oxoguanine DNA glycoslyase gene.
+TODO: add comments
+
+```{r max expression}
+title <- "Expression of 8-oxoguanine DNA glycoslyase gene"
+
+hist(min_exp_levels, main=title, xlab="Gene Expression Level", ylab="# of Samples")
+
+boxplot(min_exp_levels, main=title)
+
+stripchart(min_exp_levels, method="jitter", xlab="Gene Expression Level", main=title)
+
+dotchart(min_exp_levels, main=title)
+
+dotchart(sort(min_exp_levels), main=title)
+```
 
 TODO: the rest of question 3
 https://www.ncbi.nlm.nih.gov/geo/geo2r/?acc=GSE764
 
-TODO: go back and add descriptions to all manipulations and plots
+Volcano plot of differential expression analysis:
+```{r volcano}
+library(ggplot2)
+```
 
 ## Question 4
 
