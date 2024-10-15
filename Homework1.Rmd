@@ -298,51 +298,100 @@ head(as.data.frame(array_data),10)
 array_data$Subset_Comparison <- "Leiomysarcoma-Myometrium"
 ```
 
-TODO: make sure to go back and do part c
+Code to create charts that visualize average gene expression level for each sample:
 
-Code to create avg. sample gene expression charts:
-
-```{r plot}
-# control samples: GSM11625, GSM11757, GSM11758, GSM11759
-# treatment samples: GSM11760, GSM11768, GSM11769, GSM11770, GSM11771, GSM11772, GSM11773, GSM11774, GSM11775
+```{r avg per sample}
 library(stringr)
+
+# Control samples
+control_samples <- c("GSM11625", "GSM11757", "GSM11758", "GSM11759")
+
 # Get all sample names
 sample_cols <- names(array_data)[grep("^GSM", names(array_data))]
-# Get avg for each sample
+
+# Get avg for each sample and keep track of if control or treatment samples
 avgs <- c()
+groups <- c()
 for(col in sample_cols){
+  # Calculate avg
   avg <- mean(array_data[[col]], na.rm=T)
   avgs <- c(avgs, avg)
+  # Place in correct group
+  group <- ifelse(col %in% control_samples, "Control", "Leiomyosarcoma")
+  groups <- c(groups, group)
 }
 names(avgs) <- sample_cols
-
-# TODO: see if these charts need to have control and treatment groups split
-# Plots
-hist(avgs)
-boxplot(avgs)
-stripchart(avgs, method="stack")
-dotchart(avgs)
-dotchart(sort(avgs))
-
+names(groups) <- sample_cols
 ```
 
-Code to create avg. gene expression per gene charts:
+Histogram:
+
+```{r histogram by sample}
+hist(avgs, main="Average Gene Expression by Sample", xlab="Average Gene Expression Level", ylab="# of Samples")
+```
+
+Boxplot:
+
+```{r boxplot by sample}
+boxplot(avgs~groups, ylab="Average Gene Expression Level", xlab="Groups")
+```
+
+Stripchart:
+
+```{r stripchart by sample}
+stripchart(avgs, method="jitter", xlab="Average Gene Expression Level")
+```
+
+Dotchart:
+
+```{r dotchart by sample}
+dotchart(avgs, main="Average Gene Expression by Sample")
+```
+
+Dotchart sorted in ascending order:
+
+```{r dotchart by sample ascending}
+dotchart(sort(avgs), main="Average Gene Expression by Sample")
+```
+
+Code to create charts that visualize average expression level for each gene:
 
 ```{r plot gene}
 # Get avg. for each gene
-array_data$AVG_EXPRESSION <- rowMeans(array_data[, 8:length(array_data)], na.rm=T)
+array_data$AVG_EXPRESSION <- rowMeans(array_data[c(sample_cols)], na.rm=T)
 
-# TODO: see if these charts need gene names
-# Plots
-hist(array_data$AVG_EXPRESSION)
-boxplot(array_data$AVG_EXPRESSION)
-dotchart(sort(array_data$AVG_EXPRESSION))
+# Split into control and treatment groups, and re-calculate avgs.
+# treatment_samples <- setdiff(sample_cols, control_samples)
+# ref_cols <- setdiff(names(array_data), sample_cols)
+# 
+# control_data <- array_data[c(ref_cols, control_samples)]
+# control_data$AVG_EXPRESSION <- rowMeans(control_data[c(control_samples)], na.rm=T)
+# trt_data <- array_data[c(ref_cols, treatment_samples)]
+# trt_data$AVG_EXPRESSION <- rowMeans(trt_data[c(treatment_samples)], na.rm=T)
+```
 
+Histogram:
+
+```{r hist by gene}
+hist(array_data$AVG_EXPRESSION, main="Average Expression by Gene", xlab="Average Gene Expression Level", ylab="# of Genes")
+```
+
+Boxplot:
+
+```{r boxplot by gene}
+boxplot(array_data$AVG_EXPRESSION, main="Average Expression Level by Gene")
+```
+
+```{r dotchart by gene ascending}
+dotchart(sort(array_data$AVG_EXPRESSION), main="Average Expression by Gene")
 ```
 
 Code to find genes with the highest and the lowest expression levels across all samples – capture their names and characteristic expression levels.
 
 TODO: the rest of question 3
+https://www.ncbi.nlm.nih.gov/geo/geo2r/?acc=GSE764
+
+TODO: go back and add descriptions to all manipulations and plots
 
 ## Question 4
 
