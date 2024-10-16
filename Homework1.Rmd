@@ -216,7 +216,7 @@ GEODataDownload <- function(DS, gpl, gsm, PlateAnnotInfo, GenerateMetaData, Tech
     tT <- topTable(fit2, adjust="fdr", sort.by = "B", number = 25000000000)
     
     #### subset ####
-    ex2 <- data.table(subset(tT, select=c("ID", "logFC", "P.Value", "adj.P.Val")))
+    ex2 <- data.table(subset(tT, select=c("ID", "logFC", "AveExpr", "P.Value", "adj.P.Val")))
     ex2$ID <- as.character(ex2$ID)
     
     #### annotate with gene names ####
@@ -450,8 +450,8 @@ TODO: add comments
 ```{r volcano, warning = FALSE}
 library(ggplot2)
 
-# Volcano plot has log2(fold change) on x-axis and -log10(adj p value) on y-axis
-volcano_plot <- array-data %>%
+# Volcano plot is dot plot with log2(fold change) on x-axis and -log10(adj p value) on y-axis
+volcano_plot <- array_data %>%
   ggplot(aes(x=logFC, y=-log10(adj.P.Val))) +
    geom_point()
 
@@ -459,9 +459,19 @@ volcano_plot
 ```
 
 MA plot:
-
+TODO: add comments
 ```{r ma, warning=FALSE}
-# MA plot has avg. expression signal on x-axis and log2(fold change) on y-axis
+
+# MA plot is dot plot with avg. expression signal on x-axis and log2(fold change) on y-axis
+array_data$threshold <- as.factor(array_data$adj.P.Val < 0.05)
+ma_plot <- array_data %>%
+  ggplot(aes(x=AveExpr, y=logFC, colour=threshold)) + 
+    geom_point(alpha=0.4, size=1.8) + 
+    geom_hline(aes(yintercept = 0), colour = "blue", size = 1.2) +
+    ylim(c(min(array_data$logFC), max(array_data$logFC))) +
+    guides(color = guide_legend(title = "Padj<0.05"))
+
+ma_plot
 ```
 
 ## Question 4
