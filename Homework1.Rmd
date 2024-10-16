@@ -445,14 +445,14 @@ dotchart(min_exp_levels, main=title)
 dotchart(sort(min_exp_levels), main=title)
 ```
 
-Volcano plot of differential expression analysis:
-TODO: add comments
+The below code produces a volcano plot of the differential expression analysis. A volcano plot is a scatterplot that plots the statistical significance versus the fold change. The most statistically significant genes are closest to the top of the chart because they have the lowest adjusted p values, meaning the lowest probability that differences observed between control and treatment groups are due to chance. The fold change is the ratio between the gene expression of the two groups. As the fold change increases or decreases from zero, this indicates there is a greater proportional difference in gene expression between the two groups.
+
 ```{r volcano, warning = FALSE}
 library(ggplot2)
 
 # Volcano plot is dot plot with log2(fold change) on x-axis and -log10(adj p value) on y-axis
-ex2$threshold <- as.factor(ex2$adj.P.Val < 0.05)
-volcano_plot <- ex2 %>%
+array_data$threshold <- as.factor(array_data$adj.P.Val < 0.05)
+volcano_plot <- array_data %>%
   ggplot(aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
    geom_point() +
     guides(color = guide_legend(title = "Padj<0.05"))
