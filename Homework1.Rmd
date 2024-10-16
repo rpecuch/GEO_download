@@ -169,7 +169,7 @@ GEODataDownload <- function(DS, gpl, gsm, PlateAnnotInfo, GenerateMetaData, Tech
     # Load series and platform data from GEO
     gset <- getGEO(DS)
     if(length(gset) > 1) idx <- grep(gpl, attr(gset, "names")) else idx <- 1
-    gset <- gset[[idx]]
+    gset <- gset[[idx]] # ExpressionSet object
     
     # Make proper column names to match toptable
     fvarLabels(gset) <- make.names(fvarLabels(gset))
@@ -185,29 +185,34 @@ GEODataDownload <- function(DS, gpl, gsm, PlateAnnotInfo, GenerateMetaData, Tech
     gset <- gset[ ,sel]
     
     # log2 transformation
-    ex <- exprs(gset)
+    ex <- exprs(gset) # Matrix with row for each probe ID and column for each sample
+    # Produce sample quantiles as a numerical vector
     qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
-    LogC <- (qx[5] > 100) ||
-      (qx[6]-qx[1] > 50 && qx[2] > 0) ||
-      (qx[2] > 0 && qx[2] < 1 && qx[4] < 2)
+    # Assign Boolean value to LogC, T if one of the expressions is true
+    LogC <- (qx[5] > 100) || # 99th percentile greater than 100
+      (qx[6]-qx[1] > 50 && qx[2] > 0) || # Range greater than 50 and 25th percentile greater than 0
+      (qx[2] > 0 && qx[2] < 1 && qx[4] < 2) # 25th percentile greater than 0 and less than 1, and 75th percentile less than 2
+    # Treat values 0 and lower as NaN, 
     if(LogC){ ex[which(ex <= 0)] <- NaN
+      # Get log in base 2 of matrix, and place values in gset
       exprs(gset) <- log2(ex) }
     
     sml <- paste("G", sml, sep="")
     f1 <- as.factor(sml)
     gset$description2 <- f1
+    # Create matrix to assign samples to treatment groups. Each sample is a row and treatment groups are columns. Values within matrix are 1 for T and 0 for F
     design <- model.matrix(~description2 + 0, gset)
     colnames(design) <- levels(f1)
     
     # Fit linear model
-    fit <- lmFit(gset, design)
+    fit <- lmFit(gset, design) # MArrayLM object
     
     # Set up contrasts of interest and recalculate model coefficients
     cont.matrix <- makeContrasts(G1-G0, levels = design)
-    fit2 <- contrasts.fit(fit, cont.matrix)
+    fit2 <- contrasts.fit(fit, cont.matrix) # MArrayLM object
     
     # Compute statistics and table of top significant genes
-    fit2 <- eBayes(fit2, 0.01)
+    fit2 <- eBayes(fit2, 0.01) # MArrayLM object
     tT <- topTable(fit2, adjust="fdr", sort.by = "B", number = 25000000000)
     
     #### subset ####
@@ -391,7 +396,7 @@ dotchart(sort(array_data$AVG_EXPRESSION), main="Average Expression by Gene")
 
 Calculations to find genes with the highest and the lowest and highest expression levels across all samples:
 
-```{r high and low}
+```{r high and low, warning = FALSE}
 # Gene with highest expression level across all samples - 1
 max_expression <- max(array_data$AVG_EXPRESSION, na.rm=T)
 array_data_high <- array_data[!is.na(array_data$AVG_EXPRESSION) ,]
@@ -409,7 +414,7 @@ min_exp_levels <- as.vector(as.numeric(array_data_low[sample_cols]))
 The following plots show the distribution across samples of the gene expression level of the ribosomal protein L37a gene.
 TODO: add comments
 
-```{r max expression}
+```{r max expression, warning = FALSE}
 title <- "Expression of ribosomal protein L37a gene"
 
 hist(max_exp_levels, main=title, xlab="Gene Expression Level", ylab="# of Samples")
@@ -426,7 +431,7 @@ dotchart(sort(max_exp_levels), main=title)
 The following plots show the distribution across samples of the gene expression level of the 8-oxoguanine DNA glycoslyase gene.
 TODO: add comments
 
-```{r max expression}
+```{r max expression, warning = FALSE}
 title <- "Expression of 8-oxoguanine DNA glycoslyase gene"
 
 hist(min_exp_levels, main=title, xlab="Gene Expression Level", ylab="# of Samples")
@@ -440,12 +445,23 @@ dotchart(min_exp_levels, main=title)
 dotchart(sort(min_exp_levels), main=title)
 ```
 
-TODO: the rest of question 3
-https://www.ncbi.nlm.nih.gov/geo/geo2r/?acc=GSE764
-
 Volcano plot of differential expression analysis:
-```{r volcano}
+TODO: add comments
+```{r volcano, warning = FALSE}
 library(ggplot2)
+
+# Volcano plot has log2(fold change) on x-axis and -log10(adj p value) on y-axis
+volcano_plot <- array-data %>%
+  ggplot(aes(x=logFC, y=-log10(adj.P.Val))) +
+   geom_point()
+
+volcano_plot
+```
+
+MA plot:
+
+```{r ma, warning=FALSE}
+# MA plot has avg. expression signal on x-axis and log2(fold change) on y-axis
 ```
 
 ## Question 4
