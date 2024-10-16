@@ -419,7 +419,7 @@ dotchart(sort(max_exp_levels), main=title)
 
 The following plots show the distribution across samples of the gene expression level of the 8-oxoguanine DNA glycoslyase gene. The plots visualize that the the expression level is 20 in all samples.
 
-```{r max expression, warning = FALSE}
+```{r min expression, warning = FALSE}
 title <- "Expression of 8-oxoguanine DNA glycoslyase gene"
 
 hist(min_exp_levels, main=title, xlab="Gene Expression Level", ylab="# of Samples")
