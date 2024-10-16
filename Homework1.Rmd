@@ -460,8 +460,8 @@ volcano_plot <- array_data %>%
 volcano_plot
 ```
 
-MA plot:
-TODO: add comments
+The below code produces a MA plot of the differential expression analysis. A MA plot is a scatterplot that plots the fold change versus the average expression of genes in the log scale. As the fold change increases or decreases from zero, this indicates there is a greater proportional difference in gene expression between the two groups.
+
 ```{r ma, warning=FALSE}
 
 # MA plot is dot plot with avg. expression signal on x-axis and log2(fold change) on y-axis
