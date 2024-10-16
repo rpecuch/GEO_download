@@ -59,27 +59,27 @@ Objective A: Execute and explain the results of the following block of R code:
 ```{r, warning = FALSE}
 mat <- matrix(1:9, nrow = 3, ncol = 3)
 ```
-This line of code uses the matrix() function to generate a matrix with numerical data values 1-9. The matrix has 3 rows and 3 columns, and the data values fill in the first column, then the second, then the third. There is no need for recycling because the number of data values equals the dimensions of the matrix. Because the result of the matrix() function is being stored in a variable, nothing is printed.
+The above line of code uses the matrix() function to generate a matrix with numerical data values 1-9. The matrix has 3 rows and 3 columns, and the data values fill in the first column, then the second, then the third. There is no need for recycling because the number of data values equals the dimensions of the matrix. Because the result of the matrix() function is being stored in a variable, nothing is printed.
 
 ```{r, warning = FALSE}
 which.max(mat)
 ```
-This line of code uses the which.max() function to determine the index of the first instance of the maximum of the matrix, which is index 9. The index is determined by column, meaning looking through all the values in column 1 top to bottom, then column 2, then column 3. The result is not being stored in a variable and thus is printed.
+The above line of code uses the which.max() function to determine the index of the first instance of the maximum of the matrix, which is index 9. The index is determined by column, meaning looking through all the values in column 1 top to bottom, then column 2, then column 3. The result is not being stored in a variable and thus is printed.
 
 ```
 which.max(as.data.frame(mat))
 ```
-This line of code attempts to use the which.max() function on the matrix that has been coerced to a data frame. An error message is printed because the which.max() function takes a single vector as an input. In R, a matrix is stored internally as single vector, but a data frame is stored in a way that rather each column is a vector.
+The above line of code attempts to use the which.max() function on the matrix that has been coerced to a data frame. An error message is printed because the which.max() function takes a single vector as an input. In R, a matrix is stored internally as single vector, but a data frame is stored in a way that rather each column is a vector.
 
 ```
 mat[1:9,]
 ```
-This line of code attempts to subset a matrix, but an error message is printed because the first argument is specifying rows 1-9. This matrix only has rows 1-3, as it is a 3 x 3 dimension matrix.
+The above line of code attempts to subset a matrix, but an error message is printed because the first argument is specifying rows 1-9. This matrix only has rows 1-3, as it is a 3 x 3 dimension matrix.
 
 ```
 mat[,1:9]
 ```
-This line of code attempts to subset a matrix, but an error message is printed because the second argument is specifying columns 1-9. This matrix only has columns 1-3, as it is a 3 x 3 dimension matrix.
+The above line of code attempts to subset a matrix, but an error message is printed because the second argument is specifying columns 1-9. This matrix only has columns 1-3, as it is a 3 x 3 dimension matrix.
 
 
 Objective B: Execute and explain the results of the following block of R code:
@@ -87,12 +87,12 @@ Objective B: Execute and explain the results of the following block of R code:
 ```{r, warning = FALSE}
 m <- matrix(c(1:5,NA,7,7,NA), nrow=3,ncol=3,byrow=T); print(m)
 ```
-This line of code uses the matrix() function to generate a matrix with the following values: 1, 2, 3, 4, 5, NA, 7, 7, and NA. The matrix has 3 rows and 3 columns, and because byrow=T is specified the data values fill in the first row, then the second, then the third. There is no need for recycling because the number of data values equals the dimensions of the matrix. Nothing is printed when the result of a function is being stored in a variable, but the print() function is then called which prints the matrix.
+The above line of code uses the matrix() function to generate a matrix with the following values: 1, 2, 3, 4, 5, NA, 7, 7, and NA. The matrix has 3 rows and 3 columns, and because byrow=T is specified the data values fill in the first row, then the second, then the third. There is no need for recycling because the number of data values equals the dimensions of the matrix. Nothing is printed when the result of a function is being stored in a variable, but the print() function is then called which prints the matrix.
 
 ```{r, warning = FALSE}
 numbers <- NULL
 ```
-This line of code assigns the value NULL to the variable called numbers. Nothing is printed because the value is being stored in a variable. When used with the below chunk of code, this line of code serves the purpose of initializing the numbers variable with an empty value. The variable is now available to have its value changed in the for loop.
+The above line of code assigns the value NULL to the variable called numbers. Nothing is printed because the value is being stored in a variable. When used with the below chunk of code, this line of code serves the purpose of initializing the numbers variable with an empty value. The variable is now available to have its value changed in the for loop.
 
 ```
 for(i in 1:4){
@@ -100,7 +100,7 @@ for(i in 1:4){
   numbers <- c(numbers, temp)
 }
 ```
-This block of code attempts to loop through the numbers in the range 1-4 and apply the following logic at each iteration:
+The above block of code attempts to loop through the numbers in the range 1-4 and apply the following logic at each iteration:
 - Subset a single row from matrix m with the row number matching the current iteration of the loop
 - Add all of the values in the subsetted matrix to the current values of the numbers variable
 However, an error message is printed on the final iteration of the loop because matrix m is a 3 x 3 matrix and does not have a row 4. Because the loop was able to successfully complete iterations 1-3, the current value of the numbers variable is c(1, 2, 3, 4, 5, NA, 7, 7, NA).
@@ -123,7 +123,7 @@ Treatment group: uterine leiomyosarcoma samples
 
 Code to get plate annotation info:
 
-``` {r annot, warning = FALSE}
+``` {r annot, message = FALSE}
 library(GEOquery)
 library(data.table)
 library(org.Hs.eg.db)
@@ -157,7 +157,7 @@ PlateAnnotInfo$GPLID <- gpl
 
 Code to download data and save to working directory:
 
-```{r download, warning = FALSE}
+```{r download, message = FALSE, warning = FALSE}
 library(DESeq2)
 library(limma)
 
@@ -364,19 +364,9 @@ Code to create charts that visualize average expression level for each gene:
 ```{r plot gene, warning = FALSE}
 # Get avg. for each gene
 array_data$AVG_EXPRESSION <- rowMeans(array_data[c(sample_cols)], na.rm=T)
-
-# TODO: remove this code if unused
-# Split into control and treatment groups, and re-calculate avgs.
-# treatment_samples <- setdiff(sample_cols, control_samples)
-# ref_cols <- setdiff(names(array_data), sample_cols)
-# 
-# control_data <- array_data[c(ref_cols, control_samples)]
-# control_data$AVG_EXPRESSION <- rowMeans(control_data[c(control_samples)], na.rm=T)
-# trt_data <- array_data[c(ref_cols, treatment_samples)]
-# trt_data$AVG_EXPRESSION <- rowMeans(trt_data[c(treatment_samples)], na.rm=T)
 ```
 
-The below plot is a histogram of the average gene expression by gene. The plot visualizes that depending on the gene, the average expression level in a sample can reach nearly 30000. Due to the visualized peak, the plot shows that the most common average gene expression in a sample is well below 5000, but this chart would need to be displayed on a larger screen and with more frequent x-labels to gauge more specific numbers.
+The below plot is a histogram of the average gene expression by gene. The plot visualizes that depending on the gene, the average expression level in a sample can reach nearly 30000. Due to the visualized peak, the plot shows that the most common average gene expression in a sample is well below 5000, but this chart would need to be displayed on a larger screen and with more frequent x-labels or use log scale to gauge more specific numbers.
 
 ```{r hist by gene, warning = FALSE}
 hist(array_data$AVG_EXPRESSION, main="Average Expression by Gene", xlab="Average Gene Expression Level", ylab="# of Genes", breaks=200)
@@ -411,8 +401,7 @@ array_data_low <- array_data_low[1,]
 min_exp_levels <- as.vector(as.numeric(array_data_low[sample_cols]))
 ```
 
-The following plots show the distribution across samples of the gene expression level of the ribosomal protein L37a gene.
-TODO: add comments
+The following plots show the distribution across samples of the gene expression level of the ribosomal protein L37a gene. The plots visualize that the the expression level stays under 40,000 for most of the samples and is mostly concentrated around 20,000. However, outliers are present with gene expression levels reaching up to 100,000.
 
 ```{r max expression, warning = FALSE}
 title <- "Expression of ribosomal protein L37a gene"
@@ -428,8 +417,7 @@ dotchart(max_exp_levels, main=title)
 dotchart(sort(max_exp_levels), main=title)
 ```
 
-The following plots show the distribution across samples of the gene expression level of the 8-oxoguanine DNA glycoslyase gene.
-TODO: add comments
+The following plots show the distribution across samples of the gene expression level of the 8-oxoguanine DNA glycoslyase gene. The plots visualize that the the expression level is 20 in all samples.
 
 ```{r max expression, warning = FALSE}
 title <- "Expression of 8-oxoguanine DNA glycoslyase gene"
