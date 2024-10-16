@@ -451,9 +451,11 @@ TODO: add comments
 library(ggplot2)
 
 # Volcano plot is dot plot with log2(fold change) on x-axis and -log10(adj p value) on y-axis
-volcano_plot <- array_data %>%
-  ggplot(aes(x=logFC, y=-log10(adj.P.Val))) +
-   geom_point()
+ex2$threshold <- as.factor(ex2$adj.P.Val < 0.05)
+volcano_plot <- ex2 %>%
+  ggplot(aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
+   geom_point() +
+    guides(color = guide_legend(title = "Padj<0.05"))
 
 volcano_plot
 ```
@@ -463,7 +465,6 @@ TODO: add comments
 ```{r ma, warning=FALSE}
 
 # MA plot is dot plot with avg. expression signal on x-axis and log2(fold change) on y-axis
-array_data$threshold <- as.factor(array_data$adj.P.Val < 0.05)
 ma_plot <- array_data %>%
   ggplot(aes(x=AveExpr, y=logFC, colour=threshold)) + 
     geom_point(alpha=0.4, size=1.8) + 
